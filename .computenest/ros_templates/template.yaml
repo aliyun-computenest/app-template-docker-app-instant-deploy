@@ -14,7 +14,6 @@ Parameters:
     Label:
       en: Branch
       zh-cn: 代码分支
-    AssociationProperty: ALIYUN::OOS::GitBranch::Name
   ############ 隐藏参数 ############
   AcrImageName:
     Type: String
@@ -112,6 +111,7 @@ Parameters:
     AssociationProperty: 'ALIYUN::ECS::Instance::InstanceType'
     AssociationPropertyMetadata:
       InstanceChargeType: '${ChargeType}'
+      ZoneId: '${ZoneId}'
       Constraints:
         InstanceTypeFamily:
           - ecs.u1
@@ -125,6 +125,12 @@ Parameters:
     MaxValue: 65535
     MinValue: 0
     Default: 80
+  ZoneId:
+    AssociationProperty: 'ALIYUN::ECS::Instance::ZoneId'
+    Type: String
+    Label:
+      zh-cn: 可用区
+      en: Zone
   WhetherCreateVpc:
     Type: Boolean
     Label:
@@ -152,6 +158,7 @@ Parameters:
     AssociationProperty: ALIYUN::ECS::VSwitch::VSwitchId
     AssociationPropertyMetadata:
       VpcId: ${VpcId}
+      ZoneId: '${ZoneId}'
       Visible:
         Condition:
           Fn::Equals:
@@ -210,6 +217,8 @@ Resources:
       UpdatePolicy: ForAllInstances
       IoOptimized: optimized
       SystemDiskCategory: cloud_ssd
+      ZoneId:
+        Ref: ZoneId
       VpcId:
         Fn::If:
           - CreateVpcCondition
