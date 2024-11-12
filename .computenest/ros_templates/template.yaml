@@ -309,4 +309,4 @@ Metadata:
             zh-cn: ECS实例配置(默认按量付费|1核1G|开放80端口|新建VPC)
             en: ECS instance configuration(PayAsYouGo 1C1G port 80)
         DefaultExpand: false
-    Hidden: ['ImageName', 'ImageTag', 'AcrUsername', 'AcrPassword']
+        #Hidden: ['ImageName', 'ImageTag', 'AcrUsername', 'AcrPassword']
