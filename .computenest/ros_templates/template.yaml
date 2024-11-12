@@ -1,0 +1,312 @@
+ROSTemplateFormatVersion: '2015-09-01'
+Description:
+  zh-cn: 从镜像仓库部署单机容器应用
+  en: Deploy container application from image registry
+Conditions:
+  CreateVpcCondition:
+    Fn::Equals:
+      - true
+      - Ref: WhetherCreateVpc
+Parameters:
+  # Branch入参用来配置变配操作
+  Branch:
+    Type: String
+    Label:
+      en: Branch
+      zh-cn: 代码分支
+    AssociationProperty: ALIYUN::OOS::GitBranch::Name
+  ############ 隐藏参数 ############
+  AcrImageName:
+    Type: String
+    Default: ''
+  AcrImageTag:
+    Type: String
+    Default: ''
+  AcrUsername:
+    Type: String
+    Default: ''
+  AcrPassword:
+    Type: String
+    NoEcho: true
+    Default: ''
+  ############ 隐藏参数 end ############
+  EnvVar:
+    Type: Json
+    Label:
+      en: Environment variable for container
+      zh-cn: 容器环境变量
+    AssociationProperty: List[Parameters]
+    AssociationPropertyMetadata:
+      Parameters:
+        Name:
+          Type: String
+        Value:
+          Type: String
+          NoEcho: true
+    Default: {}
+  ChargeType:
+    Label:
+      zh-cn: 付费模式
+      en: Pay type
+    Type: String
+    AllowedValues:
+      - PostPaid
+      - PrePaid
+    Default: PostPaid
+    AssociationProperty: ChargeType
+    AssociationPropertyMetadata:
+      LocaleKey: ChargeType
+  PeriodUnit:
+    AssociationProperty: PayPeriodUnit
+    AssociationPropertyMetadata:
+      Visible:
+        Condition:
+          'Fn::Not':
+            'Fn::Equals':
+              - '${ChargeType}'
+              - PostPaid
+    Default: Month
+    AllowedValues:
+      - Month
+    Label:
+      zh-cn: 购买资源时长周期
+      en: Pay period unit
+    Type: String
+  Period:
+    AssociationProperty: PayPeriod
+    AssociationPropertyMetadata:
+      Visible:
+        Condition:
+          'Fn::Not':
+            'Fn::Equals':
+              - '${ChargeType}'
+              - PostPaid
+    Default: 1
+    Label:
+      zh-cn: 预付费资源的购买时长
+      en: Prepaid resource pay period
+    AllowedValues:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      - 12
+      - 24
+      - 36
+      - 48
+      - 60
+    Type: Number
+  EcsInstanceType:
+    Type: String
+    Label:
+      en: Instance Type
+      zh-cn: 实例类型
+    Description:
+      zh-cn: 请参考<a href='https://help.aliyun.com/zh/ecs/use-cases/best-practices-for-instance-type-selection' target='_blank'>ECS选型最佳实践</a>
+      en: Please refer to <a href='https://www.alibabacloud.com/help/en/ecs/use-cases/best-practices-for-instance-type-selection' target='_blank'>Best practices for selecting ECS instance types</a>
+    AssociationProperty: 'ALIYUN::ECS::Instance::InstanceType'
+    AssociationPropertyMetadata:
+      InstanceChargeType: '${ChargeType}'
+      Constraints:
+        InstanceTypeFamily:
+          - ecs.u1
+          - ecs.e
+    Default: ecs.e-c1m1.large
+  Port:
+    Type: Number
+    Label:
+      en: Application listen port
+      zh-cn: 应用监听端口
+    MaxValue: 65535
+    MinValue: 0
+    Default: 80
+  WhetherCreateVpc:
+    Type: Boolean
+    Label:
+      en: Whether to create new VPC
+      zh-cn: 是否新建VPC
+    Default: true
+  VpcId:
+    Type: String
+    Label:
+      en: VPC ID
+      zh-cn: 专有网络VPC实例ID
+    AssociationProperty: ALIYUN::ECS::VPC::VPCId
+    AssociationPropertyMetadata:
+      Visible:
+        Condition:
+          Fn::Equals:
+            - ${WhetherCreateVpc}
+            - false
+    Default: ''
+  VSwitchId:
+    Type: String
+    Label:
+      en: VSwitch ID
+      zh-cn: 交换机实例ID
+    AssociationProperty: ALIYUN::ECS::VSwitch::VSwitchId
+    AssociationPropertyMetadata:
+      VpcId: ${VpcId}
+      Visible:
+        Condition:
+          Fn::Equals:
+            - ${WhetherCreateVpc}
+            - false
+    Default: ''
+Resources:
+  EcsZoneDataSource:
+    Type: DATASOURCE::ECS::Zones
+    Properties:
+      SystemDiskCategory: cloud_ssd
+      ResourceType: instance
+      InstanceChargeType:
+        Ref: ChargeType
+      IoOptimized: optimized
+      InstanceType:
+        Ref: EcsInstanceType
+  EcsVpc:
+    Type: 'ALIYUN::ECS::VPC'
+    Condition: CreateVpcCondition
+    Properties:
+      CidrBlock: '10.0.0.0/8'
+  EcsVSwitch:
+    Type: 'ALIYUN::ECS::VSwitch'
+    Condition: CreateVpcCondition
+    Properties:
+      VpcId:
+        Ref: EcsVpc
+      ZoneId:
+        Fn::Select:
+          - 0
+          - Fn::GetAtt:
+            - EcsZoneDataSource
+            - ZoneIds
+      CidrBlock: '10.0.0.0/24'
+  EcsSecurityGroup:
+    Type: 'ALIYUN::ECS::SecurityGroup'
+    Properties:
+      VpcId:
+        Fn::If:
+          - CreateVpcCondition
+          - Ref: EcsVpc
+          - Ref: VpcId
+      SecurityGroupIngress:
+        - PortRange: 22/22
+          Priority: 1
+          SourceCidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+        - SourceCidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          PortRange:
+            Fn::Sub: '${Port}/${Port}'
+  EcsInstanceGroup:
+    Type: 'ALIYUN::ECS::InstanceGroup'
+    Properties:
+      UpdatePolicy: ForAllInstances
+      IoOptimized: optimized
+      RamRoleName:
+        Fn::GetAtt:
+          - InstanceRole
+          - RoleName
+      SystemDiskCategory: cloud_ssd
+      VpcId:
+        Fn::If:
+          - CreateVpcCondition
+          - Ref: EcsVpc
+          - Ref: VpcId
+      InstanceChargeType:
+        Ref: ChargeType
+      SecurityGroupId:
+        Ref: EcsSecurityGroup
+      SystemDiskSize: 40
+      ImageId: aliyun_3_x64_20G_alibase_20240819.vhd
+      PeriodUnit:
+        Ref: PeriodUnit
+      VSwitchId:
+         Fn::If:
+          - CreateVpcCondition
+          - Ref: EcsVSwitch
+          - Ref: VSwitchId
+      Period:
+        Ref: Period
+      InstanceType:
+        Ref: EcsInstanceType
+      MaxAmount: 1
+      InternetMaxBandwidthOut: 10
+  RunApplication:
+    Type: ALIYUN::ECS::RunCommand
+    Properties:
+      Sync: true
+      CommandContent:
+        Fn::Sub:
+          |-
+            #!/bin/bash
+            # 判断是否镜像在本地是否已存在
+            docker images ${AcrImageName}:${AcrImageTag} | grep ${AcrImageName}
+            if [ $? -gt 0 ]; then
+              # 本地不存在镜像则进行登录registry
+              AcrRepoName=$(echo ${AcrImageName} | awk -F/ '{print $1}')
+              docker login $AcrRepoName --username=${AcrUsername} --password=${AcrPassword}
+            fi
+
+            # 保存环境变量
+            mkdir -p /opt/applicationmanager
+            touch /opt/applicationmanager/app.env
+            echo ${EnvVar} | jq -r '.[] | to_entries | .[] | "\(.key)=\(.value)"' >> /opt/applicationmanager/app.env
+
+            # 停止已有的服务
+            systemctl stop docker-application
+
+            # 创建系统服务
+            cat > /etc/systemd/system/docker-application.service <<EOF
+            [Unit]
+            Description=Docker application
+            Requires=docker.service
+            After=docker.service
+
+            [Service]
+            Restart=always
+            RemainAfterExit=yes
+            WorkingDirectory=/opt/applicationmanager
+            ExecStartPre=docker stop -t 10 $(/usr/bin/docker ps -q --filter "ancestor=${AcrImageName}:${AcrImageTag}")
+            ExecStart=docker run --restart unless-stopped --network=host --env-file app.env ${AcrImageName}:${AcrImageTag}
+            ExecStop=docker stop -t 10 $(/usr/bin/docker ps -q --filter "ancestor=${AcrImageName}:${AcrImageTag}")
+            TimeoutStartSec=0
+
+            [Install]
+            WantedBy=multi-user.target
+            EOF
+
+            systemctl start docker-application
+      Type: RunShellScript
+      InstanceIds:
+        Fn::GetAtt:
+          - EcsInstanceGroup
+          - InstanceIds
+      Timeout: '600'
+Mappings: {}
+Metadata:
+  'ALIYUN::ROS::Interface':
+    ParameterGroups:
+      - Parameters:
+          - Branch
+          - EnvVar
+          - Port
+          - ChargeType
+          - PeriodUnit
+          - Period
+          - EcsInstanceType
+          - WhetherCreateVpc
+          - VpcId
+          - VSwitchId
+        Label:
+          default:
+            zh-cn: ECS实例配置(默认按量付费|1核1G|开放80端口|新建VPC)
+            en: ECS instance configuration(PayAsYouGo 1C1G port 80)
+        DefaultExpand: false
+    Hidden: ['ImageName', 'ImageTag', 'AcrUsername', 'AcrPassword']
