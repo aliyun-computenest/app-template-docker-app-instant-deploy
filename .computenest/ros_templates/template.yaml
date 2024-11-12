@@ -209,10 +209,6 @@ Resources:
     Properties:
       UpdatePolicy: ForAllInstances
       IoOptimized: optimized
-      RamRoleName:
-        Fn::GetAtt:
-          - InstanceRole
-          - RoleName
       SystemDiskCategory: cloud_ssd
       VpcId:
         Fn::If:
@@ -294,6 +290,15 @@ Metadata:
   'ALIYUN::ROS::Interface':
     ParameterGroups:
       - Parameters:
+          - AcrImageName
+          - AcrImageTag
+          - AcrUsername
+          - AcrPassword
+        Label:
+          default:
+            zh-cn: 控制台隐藏配置
+        DefaultExpand: false
+      - Parameters:
           - Branch
           - EnvVar
           - Port
@@ -309,4 +314,4 @@ Metadata:
             zh-cn: ECS实例配置(默认按量付费|1核1G|开放80端口|新建VPC)
             en: ECS instance configuration(PayAsYouGo 1C1G port 80)
         DefaultExpand: false
-        #Hidden: ['ImageName', 'ImageTag', 'AcrUsername', 'AcrPassword']
+        #Hidden: ['AcrImageName', 'AcrImageTag', 'AcrUsername', 'AcrPassword']
