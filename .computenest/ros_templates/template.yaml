@@ -166,16 +166,6 @@ Parameters:
             - false
     Default: ''
 Resources:
-  EcsZoneDataSource:
-    Type: DATASOURCE::ECS::Zones
-    Properties:
-      SystemDiskCategory: cloud_ssd
-      ResourceType: instance
-      InstanceChargeType:
-        Ref: ChargeType
-      IoOptimized: optimized
-      InstanceType:
-        Ref: EcsInstanceType
   EcsVpc:
     Type: 'ALIYUN::ECS::VPC'
     Condition: CreateVpcCondition
@@ -188,11 +178,7 @@ Resources:
       VpcId:
         Ref: EcsVpc
       ZoneId:
-        Fn::Select:
-          - 0
-          - Fn::GetAtt:
-            - EcsZoneDataSource
-            - ZoneIds
+        Ref: ZoneId
       CidrBlock: '10.0.0.0/24'
   EcsSecurityGroup:
     Type: 'ALIYUN::ECS::SecurityGroup'
@@ -315,6 +301,7 @@ Metadata:
           - PeriodUnit
           - Period
           - EcsInstanceType
+          - ZoneId
           - WhetherCreateVpc
           - VpcId
           - VSwitchId
