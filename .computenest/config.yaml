@@ -4,7 +4,7 @@ Service:
   DeployMetadata:
     SupplierDeployMetadata:
       ArtifactRelation:
-        'aliyun_3_x64_20G_alibase_20240528.vhd':
+        'aliyun_3_x64_20G_alibase_20240819.vhd':
           ArtifactId: artifact-6312bbc1751943678574
           ArtifactVersion: 2
     TemplateConfigs:
