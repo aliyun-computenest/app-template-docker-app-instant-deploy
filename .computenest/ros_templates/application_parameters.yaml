@@ -93,44 +93,6 @@ Parameters:
             - '${IsPublicRepo}'
             - false
     Default: ''
-  Branch:
-    Type: String
-    Label:
-      en: Branch
-      zh-cn: 代码分支
-    AssociationProperty: ALIYUN::OOS::GitBranch::Name
-    AssociationPropertyMetadata:
-      Platform: ${Platform}
-      Owner: ${Owner}
-      RepoFullName: ${Repository}
-      RepoUrl: ${PublicGitRepoUrl}
-    Default: main
-  CommitHash:
-    Type: String
-    Label:
-      en: Latest git Commit
-      zh-cn: 分支最新Commit
-    Default: ''
-    AssociationProperty: ALIYUN::OOS::GitBranch::CommitHash
-    AssociationPropertyMetadata:
-      Platform: ${Platform}
-      Owner: ${Owner}
-      RepoFullName: ${Repository}
-      RepoUrl: ${PublicGitRepoUrl}
-      Branch: ${Branch}
-      ReadOnly: true
-  EnvVar:
-    Type: Json
-    Label:
-      en: Environment variable for container
-      zh-cn: 容器环境变量
-    AssociationProperty: List[Parameters]
-    AssociationPropertyMetadata:
-      Parameters:
-        Name:
-          Type: String
-        Value:
-          Type: String
 Metadata:
   'ALIYUN::ROS::Interface':
     ParameterGroups:
@@ -141,15 +103,7 @@ Metadata:
           - Owner
           - Organization
           - Repository
-          - Branch
-          - CommitHash
         Label:
           default:
             en: Application source
             zh-cn: 应用来源
-      - Parameters:
-          - EnvVar
-        Label:
-          default:
-            en: Environment variable
-            zh-cn: 环境变量

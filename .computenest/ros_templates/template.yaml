@@ -14,27 +14,7 @@ Parameters:
     Label:
       en: Branch
       zh-cn: 代码分支
-    AssociationProperty: ALIYUN::OOS::GitBranch::Name
-    AssociationPropertyMetadata:
-      Platform: ${Platform}
-      Owner: ${Owner}
-      RepoFullName: ${Repository}
-      RepoUrl: ${PublicGitRepoUrl}
     Default: main
-  CommitHash:
-    Type: String
-    Label:
-      en: Latest git Commit
-      zh-cn: 分支最新Commit
-    Default: ''
-    AssociationProperty: ALIYUN::OOS::GitBranch::CommitHash
-    AssociationPropertyMetadata:
-      Platform: ${Platform}
-      Owner: ${Owner}
-      RepoFullName: ${Repository}
-      RepoUrl: ${PublicGitRepoUrl}
-      Branch: ${Branch}
-      ReadOnly: true
   ############ 隐藏参数 ############
   AcrImageName:
     Type: String
@@ -147,11 +127,13 @@ Parameters:
     MinValue: 0
     Default: 80
   ZoneId:
-    AssociationProperty: 'ALIYUN::ECS::Instance::ZoneId'
     Type: String
     Label:
       zh-cn: 可用区
       en: Zone
+    AssociationProperty: 'ALIYUN::ECS::Instance::ZoneId'
+    AssociationPropertyMetadata:
+      DefaultValueStrategy: 'first'
   WhetherCreateVpc:
     Type: Boolean
     Label:
@@ -165,6 +147,7 @@ Parameters:
       zh-cn: 专有网络VPC实例ID
     AssociationProperty: ALIYUN::ECS::VPC::VPCId
     AssociationPropertyMetadata:
+      AutoSelectFirst: true
       Visible:
         Condition:
           Fn::Equals:
@@ -178,6 +161,7 @@ Parameters:
       zh-cn: 交换机实例ID
     AssociationProperty: ALIYUN::ECS::VSwitch::VSwitchId
     AssociationPropertyMetadata:
+      AutoSelectFirst: true
       VpcId: ${VpcId}
       ZoneId: '${ZoneId}'
       Visible:
@@ -306,17 +290,7 @@ Metadata:
   'ALIYUN::ROS::Interface':
     ParameterGroups:
       - Parameters:
-          - AcrImageName
-          - AcrImageTag
-          - AcrUsername
-          - AcrPassword
-        Label:
-          default:
-            zh-cn: 控制台隐藏配置
-        DefaultExpand: false
-      - Parameters:
           - Branch
-          - CommitHash
           - EnvVar
           - Port
           - ChargeType
@@ -329,7 +303,7 @@ Metadata:
           - VSwitchId
         Label:
           default:
-            zh-cn: ECS实例配置(默认按量付费|1核1G|开放80端口|新建VPC)
-            en: ECS instance configuration(PayAsYouGo 1C1G port 80)
+            zh-cn: ECS实例配置
+            en: ECS instance configuration
         DefaultExpand: false
-        #Hidden: ['AcrImageName', 'AcrImageTag', 'AcrUsername', 'AcrPassword']
+        Hidden: ['AcrImageName', 'AcrImageTag', 'AcrUsername', 'AcrPassword']
