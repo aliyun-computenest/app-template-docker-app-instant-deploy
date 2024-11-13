@@ -47,6 +47,10 @@ Service:
             Type: Custom
             Parameters:
               - Branch
+              - AcrImageName
+              - AcrImageTag
+              - AcrUsername
+              - AcrPassword
           - Name: 修改容器环境变量
             Description: 修改容器环境变量，需要重启应用进程
             Type: Custom
