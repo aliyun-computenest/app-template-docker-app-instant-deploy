@@ -47,8 +47,7 @@ Service:
             Type: Custom
             Parameters:
               - Branch
-              - AcrImageName
-              - AcrImageTag
+              - ImagePullPath
               - AcrUsername
               - AcrPassword
           - Name: 修改容器环境变量
