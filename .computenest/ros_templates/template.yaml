@@ -16,10 +16,7 @@ Parameters:
       zh-cn: 代码分支
     Default: main
   ############ 隐藏参数 ############
-  AcrImageName:
-    Type: String
-    Default: ''
-  AcrImageTag:
+  ImagePullPath:
     Type: String
     Default: ''
   AcrUsername:
@@ -243,10 +240,10 @@ Resources:
           |-
             #!/bin/bash
             # 判断是否镜像在本地是否已存在
-            docker images ${AcrImageName}:${AcrImageTag} | grep ${AcrImageName}
+            docker images ${ImagePullPath} | grep ${ImagePullPath}
             if [ $? -gt 0 ]; then
               # 本地不存在镜像则进行登录registry
-              AcrRepoName=$(echo ${AcrImageName} | awk -F/ '{print $1}')
+              AcrRepoName=$(echo ${ImagePullPath} | awk -F/ '{print $1}')
               docker login $AcrRepoName --username=${AcrUsername} --password=${AcrPassword}
             fi
 
@@ -306,4 +303,4 @@ Metadata:
             zh-cn: ECS实例配置
             en: ECS instance configuration
         DefaultExpand: false
-        Hidden: ['AcrImageName', 'AcrImageTag', 'AcrUsername', 'AcrPassword']
+        Hidden: ['ImagePullPath', 'AcrUsername', 'AcrPassword']
