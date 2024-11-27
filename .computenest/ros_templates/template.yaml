@@ -266,9 +266,9 @@ Resources:
             Restart=always
             RemainAfterExit=yes
             WorkingDirectory=/opt/applicationmanager
-            ExecStartPre=docker stop -t 10 $(/usr/bin/docker ps -q --filter "ancestor=${AcrImageName}:${AcrImageTag}")
-            ExecStart=docker run --restart unless-stopped --network=host --env-file app.env ${AcrImageName}:${AcrImageTag}
-            ExecStop=docker stop -t 10 $(/usr/bin/docker ps -q --filter "ancestor=${AcrImageName}:${AcrImageTag}")
+            ExecStartPre=docker stop -t 10 $(/usr/bin/docker ps -q --filter "ancestor=${ImagePullPath}")
+            ExecStart=docker run --restart unless-stopped --network=host --env-file app.env ${ImagePullPath}
+            ExecStop=docker stop -t 10 $(/usr/bin/docker ps -q --filter "ancestor=${ImagePullPath}")
             TimeoutStartSec=0
 
             [Install]
