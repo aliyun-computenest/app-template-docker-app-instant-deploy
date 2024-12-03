@@ -239,6 +239,10 @@ Resources:
         Fn::Sub:
           |-
             #!/bin/bash
+            if [ "${ImagePullPath}" == "" ] || [ "${AcrUsername}" == "" ] || [ "${AcrPassword}" == "" ]; then
+              echo "ImagePullPath, AcrUsername or AcrPassword is empty, please check."
+              exit 1
+            fi
             # 判断是否镜像在本地是否已存在
             docker images ${ImagePullPath} | grep ${ImagePullPath}
             if [ $? -gt 0 ]; then
