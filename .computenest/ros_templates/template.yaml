@@ -130,6 +130,9 @@ Parameters:
       en: Zone
     AssociationProperty: 'ALIYUN::ECS::Instance::ZoneId'
     AssociationPropertyMetadata:
+      InstanceChargeType: ${ChargeType}
+      SystemDiskCategory: cloud_essd
+      InstanceType: ${EcsInstanceType}
       DefaultValueStrategy: 'first'
   WhetherCreateVpc:
     Type: Boolean
