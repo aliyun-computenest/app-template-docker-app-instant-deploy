@@ -204,7 +204,7 @@ Resources:
     Properties:
       UpdatePolicy: ForAllInstances
       IoOptimized: optimized
-      SystemDiskCategory: cloud_ssd
+      SystemDiskCategory: cloud_essd
       ZoneId:
         Ref: ZoneId
       VpcId:
@@ -303,4 +303,4 @@ Metadata:
             zh-cn: ECS实例配置
             en: ECS instance configuration
         DefaultExpand: false
-        Hidden: ['ImagePullPath', 'AcrUsername', 'AcrPassword']
+    Hidden: ['ImagePullPath', 'AcrUsername', 'AcrPassword']
