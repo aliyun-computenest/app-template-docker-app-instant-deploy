@@ -18,14 +18,11 @@ Parameters:
   ############ 隐藏参数 ############
   ImagePullPath:
     Type: String
-    Default: ''
   AcrUsername:
     Type: String
-    Default: ''
   AcrPassword:
     Type: String
     NoEcho: true
-    Default: ''
   ############ 隐藏参数 end ############
   EnvVar:
     Type: Json
