@@ -239,16 +239,19 @@ Resources:
         Fn::Sub:
           |-
             #!/bin/bash
-            if [ "${ImagePullPath}" == "" ] || [ "${AcrUsername}" == "" ] || [ "${AcrPassword}" == "" ]; then
-              echo "ImagePullPath, AcrUsername or AcrPassword is empty, please check."
+            if [ "${ImagePullPath}" == "" ]; then
+              echo "ImagePullPath is empty, please check."
               exit 1
             fi
             # 判断是否镜像在本地是否已存在
             docker images ${ImagePullPath} | grep ${ImagePullPath}
             if [ $? -gt 0 ]; then
-              # 本地不存在镜像则进行登录registry
-              AcrRepoName=$(echo ${ImagePullPath} | awk -F/ '{print $1}')
-              docker login $AcrRepoName --username=${AcrUsername} --password=${AcrPassword}
+              # 本地不存在镜像，且为私有镜像则进行登录registry
+              if [ "${AcrUsername}" != "" ]; then
+                echo "login to docker registry"
+                AcrRepoName=$(echo ${ImagePullPath} | awk -F/ '{print $1}')
+                docker login $AcrRepoName --username=${AcrUsername} --password=${AcrPassword}
+              fi
             fi
 
             # 保存环境变量
@@ -294,6 +297,14 @@ Metadata:
           - Branch
           - EnvVar
           - Port
+        Label:
+          zh-cn: 应用配置
+          en: Application configuration
+        Description:
+          zh-cn: 默认部署main分支|监听80端口
+          en: Default main branch|listen 80 port
+        DefaultExpand: false
+      - Parameters:
           - ChargeType
           - PeriodUnit
           - Period
@@ -303,8 +314,10 @@ Metadata:
           - VpcId
           - VSwitchId
         Label:
-          default:
-            zh-cn: ECS实例配置
-            en: ECS instance configuration
+          zh-cn: 云服务器配置
+          en: ECS instance configuration
+        Description:
+          zh-cn: 默认按量付费|2核2G|新建VPC
+          en: Default PayAsYourGo|2C2G|Create VPC
         DefaultExpand: false
     Hidden: ['ImagePullPath', 'AcrUsername', 'AcrPassword']
