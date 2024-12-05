@@ -249,21 +249,22 @@ Resources:
               # 本地不存在镜像，且为私有镜像则进行登录registry
               if [ "${AcrUsername}" != "" ]; then
                 echo "login to docker registry"
-                AcrRepoName=$(echo ${ImagePullPath} | awk -F/ '{print $1}')
-                docker login $AcrRepoName --username=${AcrUsername} --password=${AcrPassword}
+                server=$(echo ${ImagePullPath} | awk -F/ '{print $1}')
+                docker login $server --username=${AcrUsername} --password=${AcrPassword}
               fi
             fi
 
             # 保存环境变量
             mkdir -p /opt/applicationmanager
             touch /opt/applicationmanager/app.env
+            yum install -y jq
             echo ${EnvVar} | jq -r '.[] | to_entries | .[] | "\(.key)=\(.value)"' >> /opt/applicationmanager/app.env
 
             # 停止已有的服务
-            systemctl stop docker-application
+            systemctl stop aliyun-applicationmanager
 
             # 创建系统服务
-            cat > /etc/systemd/system/docker-application.service <<EOF
+            cat > /etc/systemd/system/aliyun-applicationmanager.service <<EOF
             [Unit]
             Description=Docker application
             Requires=docker.service
@@ -273,16 +274,17 @@ Resources:
             Restart=always
             RemainAfterExit=yes
             WorkingDirectory=/opt/applicationmanager
-            ExecStartPre=docker stop -t 10 $(/usr/bin/docker ps -q --filter "ancestor=${ImagePullPath}")
-            ExecStart=docker run --restart unless-stopped --network=host --env-file app.env ${ImagePullPath}
-            ExecStop=docker stop -t 10 $(/usr/bin/docker ps -q --filter "ancestor=${ImagePullPath}")
+            ExecStart=docker run --name applicationmanager --rm --network=host --env-file app.env ${ImagePullPath}
+            ExecStop=docker stop -t 10 applicationmanager
             TimeoutStartSec=0
 
             [Install]
             WantedBy=multi-user.target
             EOF
 
-            systemctl start docker-application
+            systemctl daemon-reload
+            systemctl enable aliyun-applicationmanager
+            systemctl start aliyun-applicationmanager
       Type: RunShellScript
       InstanceIds:
         Fn::GetAtt:
