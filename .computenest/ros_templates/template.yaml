@@ -40,7 +40,7 @@ Parameters:
         Value:
           Type: String
           NoEcho: true
-    Default: {}
+    Default: []
   ChargeType:
     Label:
       zh-cn: 付费模式
