@@ -15,12 +15,12 @@ Parameters:
       en: Branch
       zh-cn: 代码分支
     Default: main
-    AssociationProperty: "ALIYUN::OOS::GitBranch::Name"
-    AssociationPropertyMetadata:
-      Platform: ${GitPlatform}
-      Owner: "${GitAccount}"
-      RepoFullName: "${GitRepository}"
-      Organization: "${GitOrganization}"
+    # AssociationProperty: "ALIYUN::OOS::GitBranch::Name"
+    # AssociationPropertyMetadata:
+    #   Platform: ${GitPlatform}
+    #   Owner: "${GitAccount}"
+    #   RepoFullName: "${GitRepository}"
+    #   Organization: "${GitOrganization}"
   ############ 隐藏参数 ############
   ImagePullPath:
     Type: String
@@ -38,6 +38,9 @@ Parameters:
     Label:
       en: Environment variable for container
       zh-cn: 容器环境变量
+    Description:
+      en: Application manager builds container image from source, you can specify environment variables for the container
+      zh-cn: 应用管理使用buildpacks从源代码构建容器镜像，您可以指定运行容器的环境变量
     AssociationProperty: List[Parameters]
     AssociationPropertyMetadata:
       Parameters:
@@ -126,6 +129,9 @@ Parameters:
     Label:
       en: Application listen port
       zh-cn: 应用监听端口
+    Description:
+      en: The port application process listens to
+      zh-cn: 应用程序进程监听的端口
     MaxValue: 65535
     MinValue: 0
     Default: 80
@@ -311,10 +317,7 @@ Metadata:
         Label:
           zh-cn: 应用配置
           en: Application configuration
-        Description:
-          zh-cn: 默认部署main分支|监听80端口
-          en: Default main branch|listen 80 port
-        DefaultExpand: false
+        DefaultExpand: true
       - Parameters:
           - ChargeType
           - PeriodUnit
@@ -325,10 +328,7 @@ Metadata:
           - VpcId
           - VSwitchId
         Label:
-          zh-cn: 云服务器配置
-          en: ECS instance configuration
-        Description:
-          zh-cn: 默认按量付费|2核2G|新建VPC
-          en: Default PayAsYourGo|2C2G|Create VPC
+          zh-cn: 云服务器配置（默认按量付费|2核2G|新建VPC）
+          en: ECS instance configuration(Default PayAsYourGo|2C2G|NewVPC)
         DefaultExpand: false
     Hidden: ['ImagePullPath', 'AcrUsername', 'AcrPassword']

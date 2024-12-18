@@ -36,8 +36,6 @@ Parameters:
     AllowedValues:
       - gitee
       - github
-      - gitlab
-      - codeup
     AssociationProperty: ALIYUN::OOS::GitPlatform::Name
     AssociationPropertyMetadata:
       Visible:
