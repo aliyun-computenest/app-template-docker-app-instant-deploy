@@ -232,7 +232,7 @@ Resources:
       SecurityGroupId:
         Ref: EcsSecurityGroup
       SystemDiskSize: 40
-      ImageId: aliyun_3_x64_20G_alibase_20240819.vhd
+      ImageId: '{{ resolve:oos:aliyun/services/computenest/images/aliyun_3_2104_docker_26 }}'
       PeriodUnit:
         Ref: PeriodUnit
       VSwitchId:
