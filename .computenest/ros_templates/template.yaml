@@ -15,6 +15,12 @@ Parameters:
       en: Branch
       zh-cn: 代码分支
     Default: main
+    AssociationProperty: "ALIYUN::OOS::GitBranch::Name"
+    AssociationPropertyMetadata:
+      Platform: ${GitPlatform}
+      Owner: "${GitAccount}"
+      RepoFullName: "${GitRepository}"
+      Organization: "${GitOrganization}"
   ############ 隐藏参数 ############
   ImagePullPath:
     Type: String
