@@ -5,9 +5,6 @@ Parameters:
     Label:
       en: Whether the git repository is public
       zh-cn: 是否公开仓库
-    Description:
-      zh-cn: 如需部署示例应用请切换到公开仓库
-      en: Switch to public repository if wants to deploy sample application
     Default: true
   PublicGitRepoUrl:
     Type: String
