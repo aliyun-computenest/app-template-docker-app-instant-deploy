@@ -15,12 +15,29 @@ Parameters:
       en: Branch
       zh-cn: 代码分支
     Default: main
-    # AssociationProperty: "ALIYUN::OOS::GitBranch::Name"
-    # AssociationPropertyMetadata:
-    #   Platform: ${GitPlatform}
-    #   Owner: "${GitAccount}"
-    #   RepoFullName: "${GitRepository}"
-    #   Organization: "${GitOrganization}"
+    AssociationProperty: "ALIYUN::OOS::GitBranch::Name"
+    AssociationPropertyMetadata:
+      Platform: ${GitPlatform}
+      Owner: "${GitAccount}"
+      RepoFullName: "${GitRepository}"
+      Organization: "${GitOrganization}"
+  CommitHash:
+    Type: String
+    Label:
+      en: Git Commit
+      zh-cn: Git Commit
+    Description:
+      en: Input branch to get latest commit hash automatically, commit should be different when update application;If commit is not set, check git repository and branch name
+      zh-cn: 输入分支后自动获取分支最新的Commit Hash，更新应用时Commit必须不同；如果无法获取Commit请检查仓库地址和分支名称是否正确
+    Default: ''
+    AssociationProperty: ALIYUN::OOS::GitBranch::CommitHash
+    AssociationPropertyMetadata:
+      Platform: ${GitPlatform}
+      Owner: ${GitAccount}
+      RepoFullName: ${GitRepository}
+      Organization: "${GitOrganization}"
+      Branch: ${Branch}
+      ReadOnly: true
   ############ 隐藏参数 ############
   ImagePullPath:
     Type: String
@@ -312,6 +329,7 @@ Metadata:
     ParameterGroups:
       - Parameters:
           - Branch
+          - CommitHash
           - EnvVar
           - Port
         Label:
