@@ -16,6 +16,7 @@ Service:
             Type: Custom
             Parameters:
               - Branch
+              - CommitHash
               - ImagePullPath
               - AcrUsername
               - AcrPassword
