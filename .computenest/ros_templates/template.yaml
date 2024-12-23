@@ -53,8 +53,8 @@ Parameters:
   EnvVar:
     Type: Json
     Label:
-      en: Environment variable for container
-      zh-cn: 容器环境变量
+      en: Environment variables
+      zh-cn: 环境变量
     Description:
       en: Application manager builds container image from source, you can specify environment variables for the container
       zh-cn: 应用管理使用buildpacks从源代码构建容器镜像，您可以指定运行容器的环境变量

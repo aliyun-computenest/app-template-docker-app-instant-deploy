@@ -1,34 +1,40 @@
 ROSTemplateFormatVersion: '2015-09-01'
 Parameters:
-  IsPublicRepo:
-    Type: Boolean
+  RepoType:
+    Type: String
     Label:
-      en: Whether the git repository is public
-      zh-cn: 是否公开仓库
-    Default: true
+      en: Repository type
+      zh-cn: 仓库类型
+    AllowedValues:
+      - Public
+      - Private
+    Default: Public
+    AssociationPropertyMetadata:
+      ValueLabelMapping:
+        Public: 公开
+        Private: 私有
   PublicGitRepoUrl:
     Type: String
     Label:
-      zh-cn: 公开Git仓库
-      en: Public git repository
+      zh-cn: Git Clone URL
+      en: Git Clone Web URL
     Description:
-      zh-cn: Git clone地址，https格式（https://gitee.com/owner/repo.git）请注意在中国大陆地域从GitHub仓库部署可能存在网络问题。
-      en: Git clone address in https format (https://gitee.com/owner/repo.git).
+      zh-cn: Git clone地址，https格式
+      en: Git clone address in https format
     AssociationPropertyMetadata:
       Visible:
         Condition:
           'Fn::Equals':
-            - '${IsPublicRepo}'
-            - true
+            - '${RepoType}'
+            - 'Public'
     # 需要允许默认空值，这样CommitHash的AssociationProperty可以识别出用RepoUrl还是其他参数
     AllowedPattern: '^(https:\/\/[^\s]+\.git)?$'
+    Default: https://gitee.com/aliyun-computenest/springboot-demo.git
   Platform:
     Type: String
     Label:
       en: Git platform
       zh-cn: Git平台
-    Description:
-      zh-cn: 请注意在中国大陆地域从GitHub仓库部署可能存在网络问题
     Default: github
     AllowedValues:
       - gitee
@@ -38,8 +44,8 @@ Parameters:
       Visible:
         Condition:
           'Fn::Equals':
-            - '${IsPublicRepo}'
-            - false
+            - '${RepoType}'
+            - 'Private'
   Owner:
     Type: String
     Label:
@@ -51,8 +57,8 @@ Parameters:
       Visible:
         Condition:
           'Fn::Equals':
-            - '${IsPublicRepo}'
-            - false
+            - '${RepoType}'
+            - 'Private'
     Default: ''
   Organization:
     Type: String
@@ -70,8 +76,8 @@ Parameters:
       Visible:
         Condition:
           'Fn::Equals':
-            - '${IsPublicRepo}'
-            - false
+            - '${RepoType}'
+            - 'Private'
   Repository:
     Type: String
     Label:
@@ -85,14 +91,14 @@ Parameters:
       Visible:
         Condition:
           'Fn::Equals':
-            - '${IsPublicRepo}'
-            - false
+            - '${RepoType}'
+            - 'Private'
     Default: ''
 Metadata:
   'ALIYUN::ROS::Interface':
     ParameterGroups:
       - Parameters:
-          - IsPublicRepo
+          - RepoType
           - PublicGitRepoUrl
           - Platform
           - Owner
