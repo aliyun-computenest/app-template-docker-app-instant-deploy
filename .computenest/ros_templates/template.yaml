@@ -2,11 +2,6 @@ ROSTemplateFormatVersion: '2015-09-01'
 Description:
   zh-cn: 从镜像仓库部署单机容器应用
   en: Deploy container application from image registry
-Conditions:
-  CreateVpcCondition:
-    Fn::Equals:
-      - true
-      - Ref: WhetherCreateVpc
 Parameters:
   # Branch入参用来配置变配操作
   Branch:
@@ -163,12 +158,24 @@ Parameters:
       SystemDiskCategory: cloud_essd
       InstanceType: ${EcsInstanceType}
       DefaultValueStrategy: 'first'
-  WhetherCreateVpc:
-    Type: Boolean
+  VpcOption:
+    Type: String
     Label:
-      en: Whether to create new VPC
-      zh-cn: 是否新建VPC
-    Default: true
+      en: Select Existing or New VPC
+      zh-cn: 选择已有/新建的专有网络
+    AllowedValues:
+      - NewVPC
+      - ExistingVPC
+    AssociationPropertyMetadata:
+      ValueLabelMapping:
+        NewVPC:
+          zh-cn: 新建专有网络
+          en: New VPC
+        ExistingVPC:
+          zh-cn: 已有专有网络
+          en: Existing VPC
+    Required: true
+    Default: NewVPC
   VpcId:
     Type: String
     Label:
@@ -180,8 +187,8 @@ Parameters:
       Visible:
         Condition:
           Fn::Equals:
-            - ${WhetherCreateVpc}
-            - false
+            - ExistingVPC
+            - ${VpcOption}
     Default: ''
   VSwitchId:
     Type: String
@@ -196,32 +203,68 @@ Parameters:
       Visible:
         Condition:
           Fn::Equals:
-            - ${WhetherCreateVpc}
-            - false
+            - ExistingVPC
+            - ${VpcOption}
     Default: ''
+  VpcCidrBlock:
+    Type: String
+    Label:
+      en: VPC CIDR IPv4 Block
+      zh-cn: 专有网络IPv4网段
+    Description:
+      zh-cn: VPC的ip地址段范围，您可以使用以下的ip地址段或其子网:<br><font color='green'>[10.0.0.0/8]</font><br><font color='green'>[172.16.0.0/12]</font><br><font color='green'>[192.168.0.0/16]</font>
+      en: 'The ip address range of the VPC in the CidrBlock form; <br>You can use the following ip address ranges and their subnets: <br><font color=''green''>[10.0.0.0/8]</font><br><font color=''green''>[172.16.0.0/12]</font><br><font color=''green''>[192.168.0.0/16]</font>'
+    Default: 192.168.0.0/16
+    Required: true
+    AssociationProperty: ALIYUN::VPC::VPC::CidrBlock
+    AssociationPropertyMetadata:
+      Visible:
+        Condition:
+          Fn::Equals:
+            - NewVPC
+            - ${VpcOption}
+  VSwitchCidrBlock:
+    Type: String
+    Label:
+      en: VSwitch CIDR Block
+      zh-cn: 交换机子网网段
+    Description:
+      zh-cn: 必须属于VPC的子网段
+      en: Must belong to the subnet segment of VPC.
+    Default: 192.168.0.0/24
+    Required: true
+    AssociationProperty: ALIYUN::VPC::VSwitch::CidrBlock
+    AssociationPropertyMetadata:
+      VpcCidrBlock: VpcCidrBlock
+      Visible:
+        Condition:
+          Fn::Equals:
+            - NewVPC
+            - ${VpcOption}
 Resources:
-  EcsVpc:
-    Type: 'ALIYUN::ECS::VPC'
-    Condition: CreateVpcCondition
+  VpcModule:
+    Type: MODULE::ACS::ComputeNest::VpcAndVSwitch
+    Version: default
     Properties:
-      CidrBlock: '10.0.0.0/8'
-  EcsVSwitch:
-    Type: 'ALIYUN::ECS::VSwitch'
-    Condition: CreateVpcCondition
-    Properties:
-      VpcId:
-        Ref: EcsVpc
       ZoneId:
         Ref: ZoneId
-      CidrBlock: '10.0.0.0/24'
+      VpcOption:
+        Ref: VpcOption
+      VpcId:
+        Ref: VpcId
+      VSwitchId:
+        Ref: VSwitchId
+      VSwitchCidrBlock:
+        Ref: VSwitchCidrBlock
+      VpcCidrBlock:
+        Ref: VpcCidrBlock
   EcsSecurityGroup:
     Type: 'ALIYUN::ECS::SecurityGroup'
     Properties:
       VpcId:
-        Fn::If:
-          - CreateVpcCondition
-          - Ref: EcsVpc
-          - Ref: VpcId
+        Fn::GetAtt:
+          - VpcModule
+          - VpcId
       SecurityGroupIngress:
         - PortRange: 22/22
           Priority: 1
@@ -240,10 +283,9 @@ Resources:
       ZoneId:
         Ref: ZoneId
       VpcId:
-        Fn::If:
-          - CreateVpcCondition
-          - Ref: EcsVpc
-          - Ref: VpcId
+        Fn::GetAtt:
+          - VpcModule
+          - VpcId
       InstanceChargeType:
         Ref: ChargeType
       SecurityGroupId:
@@ -253,10 +295,9 @@ Resources:
       PeriodUnit:
         Ref: PeriodUnit
       VSwitchId:
-         Fn::If:
-          - CreateVpcCondition
-          - Ref: EcsVSwitch
-          - Ref: VSwitchId
+        Fn::GetAtt:
+          - VpcModule
+          - VSwitchId
       Period:
         Ref: Period
       InstanceType:
@@ -342,9 +383,11 @@ Metadata:
           - Period
           - EcsInstanceType
           - ZoneId
-          - WhetherCreateVpc
+          - VpcOption
           - VpcId
           - VSwitchId
+          - VpcCidrBlock
+          - VSwitchCidrBlock
         Label:
           zh-cn: 云服务器配置（默认按量付费|2核2G|新建VPC）
           en: ECS instance configuration(Default PayAsYourGo|2C2G|NewVPC)
