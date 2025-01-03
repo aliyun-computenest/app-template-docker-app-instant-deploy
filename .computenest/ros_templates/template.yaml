@@ -331,7 +331,7 @@ Resources:
             mkdir -p /opt/applicationmanager
             touch /opt/applicationmanager/app.env
             yum install -y jq
-            echo ${EnvVar} | jq -r '.[] | to_entries | .[] | "\(.key)=\(.value)"' >> /opt/applicationmanager/app.env
+            echo '${EnvVar}' | jq -r '.[] | to_entries | .[] | "\(.key)=\(.value)"' >> /opt/applicationmanager/app.env
 
             # 停止已有的服务
             systemctl stop aliyun-applicationmanager
@@ -347,7 +347,7 @@ Resources:
             Restart=always
             RemainAfterExit=yes
             WorkingDirectory=/opt/applicationmanager
-            ExecStart=docker run --name applicationmanager --rm --network=host --env-file app.env ${ImagePullPath}
+            ExecStart=docker run --name applicationmanager --rm -p ${Port}:${Port} --env-file app.env ${ImagePullPath}
             ExecStop=docker stop -t 10 applicationmanager
             TimeoutStartSec=0
 

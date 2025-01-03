@@ -1,5 +1,23 @@
 ROSTemplateFormatVersion: '2015-09-01'
 Parameters:
+  Platform:
+    Type: String
+    Label:
+      en: Git platform
+      zh-cn: Git平台
+    Default: github
+    AllowedValues:
+      - gitee
+      - github
+    AssociationProperty: ALIYUN::OOS::GitPlatform::Name
+  Owner:
+    Type: String
+    Label:
+      en: Git platform account
+      zh-cn: Git平台账户
+    AssociationProperty: ALIYUN::OOS::GitAccount::Name
+    AssociationPropertyMetadata:
+      Platform: '${Platform}'
   RepoType:
     Type: String
     Label:
@@ -11,16 +29,30 @@ Parameters:
     Default: Public
     AssociationPropertyMetadata:
       ValueLabelMapping:
-        Public: 公开
-        Private: 私有
+        Public: 公开仓库
+        Private: 个人或组织的私有仓库
   PublicGitRepoUrl:
     Type: String
     Label:
-      zh-cn: Git Clone URL
-      en: Git Clone Web URL
+      zh-cn: Git Clone地址（https）
+      en: Git Clone URL(https)
     Description:
-      zh-cn: Git clone地址，https格式
-      en: Git clone address in https format
+      en: 
+      zh-cn: |-
+        示例项目<ul>
+        <li><a href="https://gitee.com/aliyun-computenest/java-springboot-demo" target="_blank">Java SpringBoot</a>: https://gitee.com/aliyun-computenest/java-springboot-demo.git</li>
+        <li><a href="https://gitee.com/aliyun-computenest/java-springboot-demo" target="_blank">Python示例</a>: https://gitee.com/aliyun-computenest/java-springboot-demo.git</li>
+        <li><a href="https://gitee.com/aliyun-computenest/java-springboot-demo" target="_blank">Golang示例</a>: https://gitee.com/aliyun-computenest/java-springboot-demo.git</li>
+        <li><a href="https://gitee.com/aliyun-computenest/java-springboot-demo" target="_blank">NodeJs示例</a>: https://gitee.com/aliyun-computenest/java-springboot-demo.git</li>
+        <li><a href="https://gitee.com/aliyun-computenest/java-springboot-demo" target="_blank">Ruby示例</a>: https://gitee.com/aliyun-computenest/java-springboot-demo.git</li>
+        </ul>
+        热门开源项目推荐<ul>
+        <li><a href="https://gitee.com/aliyun-computenest/java-springboot-demo" target="_blank">热门项目1</a>: https://gitee.com/aliyun-computenest/java-springboot-demo.git</li>
+        <li><a href="https://gitee.com/aliyun-computenest/java-springboot-demo" target="_blank">热门项目2</a>: https://gitee.com/aliyun-computenest/java-springboot-demo.git</li>
+        <li><a href="https://gitee.com/aliyun-computenest/java-springboot-demo" target="_blank">热门项目3</a>: https://gitee.com/aliyun-computenest/java-springboot-demo.git</li>
+        <li><a href="https://gitee.com/aliyun-computenest/java-springboot-demo" target="_blank">热门项目4</a>: https://gitee.com/aliyun-computenest/java-springboot-demo.git</li>
+        <li><a href="https://gitee.com/aliyun-computenest/java-springboot-demo" target="_blank">热门项目5</a>: https://gitee.com/aliyun-computenest/java-springboot-demo.git</li>
+        </ul>
     AssociationPropertyMetadata:
       Visible:
         Condition:
@@ -30,36 +62,6 @@ Parameters:
     # 需要允许默认空值，这样CommitHash的AssociationProperty可以识别出用RepoUrl还是其他参数
     AllowedPattern: '^(https:\/\/[^\s]+\.git)?$'
     Default: https://gitee.com/aliyun-computenest/springboot-demo.git
-  Platform:
-    Type: String
-    Label:
-      en: Git platform
-      zh-cn: Git平台
-    Default: github
-    AllowedValues:
-      - gitee
-      - github
-    AssociationProperty: ALIYUN::OOS::GitPlatform::Name
-    AssociationPropertyMetadata:
-      Visible:
-        Condition:
-          'Fn::Equals':
-            - '${RepoType}'
-            - 'Private'
-  Owner:
-    Type: String
-    Label:
-      en: Owner
-      zh-cn: 所有者
-    AssociationProperty: ALIYUN::OOS::GitAccount::Name
-    AssociationPropertyMetadata:
-      Platform: '${Platform}'
-      Visible:
-        Condition:
-          'Fn::Equals':
-            - '${RepoType}'
-            - 'Private'
-    Default: ''
   Organization:
     Type: String
     Label:
@@ -98,10 +100,10 @@ Metadata:
   'ALIYUN::ROS::Interface':
     ParameterGroups:
       - Parameters:
-          - RepoType
-          - PublicGitRepoUrl
           - Platform
           - Owner
+          - RepoType
+          - PublicGitRepoUrl
           - Organization
           - Repository
         Label:
