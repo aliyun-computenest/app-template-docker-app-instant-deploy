@@ -331,7 +331,7 @@ Resources:
             mkdir -p /opt/applicationmanager
             touch /opt/applicationmanager/app.env
             yum install -y jq
-            echo '${EnvVar}' | jq -r '.[] | to_entries | .[] | "\(.key)=\(.value)"' >> /opt/applicationmanager/app.env
+            echo '${EnvVar}' | jq -r '.[] | "\(.Name)=\(.Value)"' >> /opt/applicationmanager/app.env
 
             # 停止已有的服务
             systemctl stop aliyun-applicationmanager
