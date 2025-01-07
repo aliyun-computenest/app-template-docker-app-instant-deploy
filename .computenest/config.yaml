@@ -12,7 +12,7 @@ Service:
       - TemplateName: docker
         Operation:
           - Name: 更新应用程序
-            Description: 从指定分支拉取更新，更新容器应用程序，需要重启应用进程
+            Description: 从指定分支拉取最新代码，更新应用程序。分支的Commit无变化时不更新
             Type: Custom
             Parameters:
               - Branch
@@ -21,16 +21,22 @@ Service:
               - AcrUsername
               - AcrPassword
           - Name: 修改容器环境变量
-            Description: 修改容器环境变量，需要重启应用进程
+            Description: 修改容器环境变量，需要重启应用
             Type: Custom
             Parameters:
               - EnvVar
+              - ImagePullPath
+              - AcrUsername
+              - AcrPassword
           - Name: 修改ECS实例配置
-            Description: 修改ECS实例配置，可能会重启ECS实例
+            Description: 修改ECS实例配置，需要重启应用
             Type: Custom
             Parameters:
               - Port
               - EcsInstanceType
+              - ImagePullPath
+              - AcrUsername
+              - AcrPassword
   ServiceType: private
   ServiceInfo:
     Locale: zh-CN
