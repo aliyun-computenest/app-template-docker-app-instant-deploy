@@ -364,6 +364,20 @@ Resources:
           - EcsInstanceGroup
           - InstanceIds
       Timeout: '600'
+Outputs:
+  endpoint:
+    Description:
+      zh-cn: 应用访问入口
+      en: Application endpoint
+    Value:
+      Fn::Sub:
+        - 'http://${ServerAddress}:${Port}'
+        - ServerAddress:
+            Fn::Select:
+            - 0
+            - Fn::GetAtt:
+              - EcsInstanceGroup
+              - PublicIps
 Mappings: {}
 Metadata:
   'ALIYUN::ROS::Interface':
