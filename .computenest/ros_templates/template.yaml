@@ -366,7 +366,7 @@ Resources:
       Timeout: '600'
 Outputs:
   endpoint:
-    Label:
+    Description:
       zh-cn: 应用访问入口
       en: Application endpoint
     Value:
