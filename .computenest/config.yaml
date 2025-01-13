@@ -20,16 +20,16 @@ Service:
               - ImagePullPath
               - AcrUsername
               - AcrPassword
-          - Name: 修改容器环境变量
-            Description: 修改容器环境变量，需要重启应用
+          - Name: 修改环境变量
+            Description: 修改环境变量，需要重启应用
             Type: Custom
             Parameters:
               - EnvVar
               - ImagePullPath
               - AcrUsername
               - AcrPassword
-          - Name: 修改ECS实例配置
-            Description: 修改ECS实例配置，需要重启应用
+          - Name: 修改云服务器配置
+            Description: 修改云服务器配置，需要重启应用
             Type: Custom
             Parameters:
               - Port

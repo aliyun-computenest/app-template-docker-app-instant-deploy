@@ -347,7 +347,7 @@ Resources:
             Restart=always
             RemainAfterExit=yes
             WorkingDirectory=/opt/applicationmanager
-            ExecStart=docker run --name applicationmanager --rm -p ${Port}:${Port} --env-file app.env ${ImagePullPath}
+            ExecStart=docker run --name applicationmanager --rm -p ${Port}:${Port} -e PORT=${Port} --env-file app.env ${ImagePullPath}
             ExecStop=docker stop -t 10 applicationmanager
             TimeoutStartSec=0
 
@@ -366,7 +366,7 @@ Resources:
       Timeout: '600'
 Outputs:
   endpoint:
-    Description:
+    Label:
       zh-cn: 应用访问入口
       en: Application endpoint
     Value:
