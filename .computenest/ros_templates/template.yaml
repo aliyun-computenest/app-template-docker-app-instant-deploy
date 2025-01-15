@@ -142,8 +142,8 @@ Parameters:
       en: Application listen port
       zh-cn: 应用监听端口
     Description:
-      en: The port application process listens to
-      zh-cn: 应用程序进程监听的端口
+      en: The port application process listens to. Port will be passed to application as environment variable PORT
+      zh-cn: 应用程序进程监听的端口。端口会作为环境变量PORT传递给应用
     MaxValue: 65535
     MinValue: 0
     Default: 80
@@ -366,6 +366,9 @@ Resources:
       Timeout: '600'
 Outputs:
   endpoint:
+    Label:
+      zh-cn: 应用访问入口
+      en: Application endpoint
     Description:
       zh-cn: 应用访问入口
       en: Application endpoint
