@@ -9,7 +9,6 @@ Parameters:
     Label:
       en: Branch
       zh-cn: 代码分支
-    Default: main
     AssociationProperty: "ALIYUN::OOS::GitBranch::Name"
     AssociationPropertyMetadata:
       Platform: ${GitPlatform}
@@ -24,7 +23,6 @@ Parameters:
     Description:
       en: Input branch to get latest commit hash automatically, commit should be different when update application;If commit is not set, check git repository and branch name
       zh-cn: 输入分支后自动获取分支最新的Commit Hash，更新应用时Commit必须不同；如果无法获取Commit请检查仓库地址和分支名称是否正确
-    Default: ''
     AssociationProperty: ALIYUN::OOS::GitBranch::CommitHash
     AssociationPropertyMetadata:
       Platform: ${GitPlatform}
@@ -52,7 +50,7 @@ Parameters:
       zh-cn: 环境变量
     Description:
       en: Application manager builds container image from source, you can specify environment variables for the container
-      zh-cn: 应用管理使用buildpacks从源代码构建容器镜像，您可以指定运行容器的环境变量
+      zh-cn: 应用管理使用<a href='https://buildpacks.io' target='_blank'>buildpacks</a>从源代码构建容器镜像，您可以指定运行容器的环境变量
     AssociationProperty: List[Parameters]
     AssociationPropertyMetadata:
       Parameters:
