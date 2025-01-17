@@ -134,6 +134,55 @@ Parameters:
           - ecs.u1
           - ecs.e
     Default: ecs.e-c1m1.large
+  InstancePassword:
+    NoEcho: true
+    Type: String
+    Description:
+      en: Server login password, Length 8-30, must contain three(Capital letters, lowercase letters, numbers, ()`~!@#$%^&*_-+=|{}[]:;'<>,.?/ Special symbol in)
+      zh-cn: 云服务器登录密码,长度8-30，必须包含三项（大写字母、小写字母、数字、 ()`~!@#$%^&*_-+=|{}[]:;'<>,.?/ 中的特殊符号）
+    AllowedPattern: '^[a-zA-Z0-9-\(\)\`\~\!\@\#\$\%\^\&\*\_\-\+\=\|\{\}\[\]\:\;\<\>\,\.\?\/]*$'
+    Label:
+      en: ECS Instance Password
+      zh-cn: 云服务器密码
+    ConstraintDescription:
+      en: Length 8-30, must contain three(Capital letters, lowercase letters, numbers, ()`~!@#$%^&*_-+=|{}[]:;'<>,.?/ Special symbol in)
+      zh-cn: 长度8-30，必须包含三项（大写字母、小写字母、数字、 ()`~!@#$%^&*_-+=|{}[]:;'<>,.?/ 中的特殊符号）
+    MinLength: 8
+    MaxLength: 30
+    AssociationProperty: ALIYUN::ECS::Instance::Password
+  SystemDiskSize:
+    Default: 40
+    Type: Number
+    Description:
+      zh-cn: 系统盘大小, 取值范围：[40, 500], 单位：GB。
+      en: 'System disk size of each node, range of values: 40-500, units: GB.'
+    MinValue: 40
+    MaxValue: 500
+    Label:
+      zh-cn: 系统盘空间
+      en: System Disk Space
+  InternetMaxBandwidthOut:
+    Type: Number
+    Label:
+      zh-cn: 公网出带宽最大值
+      en: Internet Max Bandwidth Out
+    Default: 10
+    MinValue: 1
+    MaxValue: 100
+    Description:
+      zh-cn: 公网出带宽最大值, 取值范围1-100
+      en: 'Internet Max Bandwidth Out,range of values: 1-100'
+  InternetChargeType:
+    Default: PayByTraffic
+    Type: String
+    Label:
+      zh-cn: 网络付费类型
+      en: Internet Charge Type
+    AllowedValues:
+      - PayByBandwidth
+      - PayByTraffic
+    AssociationPropertyMetadata:
+      LocaleKey: InternetChargeType
   Port:
     Type: Number
     Label:
@@ -277,7 +326,6 @@ Resources:
     Properties:
       UpdatePolicy: ForAllInstances
       IoOptimized: optimized
-      SystemDiskCategory: cloud_essd
       ZoneId:
         Ref: ZoneId
       VpcId:
@@ -288,7 +336,9 @@ Resources:
         Ref: ChargeType
       SecurityGroupId:
         Ref: EcsSecurityGroup
-      SystemDiskSize: 40
+      SystemDiskCategory: cloud_essd
+      SystemDiskSize:
+        Ref: SystemDiskSize
       ImageId: '{{ resolve:oos:aliyun/services/computenest/images/aliyun_3_2104_docker_26 }}'
       PeriodUnit:
         Ref: PeriodUnit
@@ -301,7 +351,13 @@ Resources:
       InstanceType:
         Ref: EcsInstanceType
       MaxAmount: 1
-      InternetMaxBandwidthOut: 10
+      Password:
+        Ref: InstancePassword
+      AllocatePublicIP: true
+      InternetMaxBandwidthOut:
+        Ref: InternetMaxBandwidthOut
+      InternetChargeType:
+        Ref: InternetChargeType
   RunApplication:
     Type: ALIYUN::ECS::RunCommand
     Properties:
@@ -379,6 +435,14 @@ Outputs:
             - Fn::GetAtt:
               - EcsInstanceGroup
               - PublicIps
+  loginServer:
+    Label:
+      zh-cn: 登录云服务器
+      en: Login ECS instance
+    Description:
+      zh-cn: 登录云服务器
+      en: Login ECS instance
+    Value: 从“资源管理”找到云服务器实例，点击“远程连接”，通过Workbench登录服务器; Find ECS instance in "Resource Management", click "Connection", login through Workbench.
 Mappings: {}
 Metadata:
   'ALIYUN::ROS::Interface':
@@ -393,10 +457,19 @@ Metadata:
           en: Application configuration
         DefaultExpand: true
       - Parameters:
+          - InstancePassword
+        Label:
+          zh-cn: 云服务器密码
+          en: ECS instance password
+        DefaultExpand: true
+      - Parameters:
           - ChargeType
           - PeriodUnit
           - Period
           - EcsInstanceType
+          - SystemDiskSize
+          - InternetChargeType
+          - InternetMaxBandwidthOut
           - ZoneId
           - VpcOption
           - VpcId
@@ -404,7 +477,7 @@ Metadata:
           - VpcCidrBlock
           - VSwitchCidrBlock
         Label:
-          zh-cn: 云服务器配置（默认按量付费|2核2G|新建VPC）
-          en: ECS instance configuration(Default PayAsYourGo|2C2G|NewVPC)
+          zh-cn: 云服务器配置（默认按量付费|2核2G|40G|新建VPC）
+          en: ECS instance configuration(Default PayAsYourGo|2C2G|40G|New VPC)
         DefaultExpand: false
     Hidden: ['ImagePullPath', 'AcrUsername', 'AcrPassword']
