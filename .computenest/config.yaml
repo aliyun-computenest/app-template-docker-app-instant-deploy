@@ -11,8 +11,8 @@ Service:
     ModifyParametersConfig:
       - TemplateName: docker
         Operation:
-          - Name: 更新应用程序
-            Description: 从指定分支拉取最新代码，更新应用程序。分支的Commit无变化时不更新
+          - Name: 更新应用程序 | Update Application Program
+            Description: 从指定分支拉取最新代码，更新应用程序。分支的Commit无变化时不更新 | Update application program, if the commit hash of the branch is not changed, the application will not be updated
             Type: Custom
             Parameters:
               - Branch
@@ -20,26 +20,31 @@ Service:
               - ImagePullPath
               - AcrUsername
               - AcrPassword
-          - Name: 修改环境变量
-            Description: 修改环境变量，需要重启应用
+          - Name: 修改环境变量 | Modify Environment Variable
+            Description: 修改环境变量，将重启应用进程 | Modify environment variable, application process will be restarted
             Type: Custom
             Parameters:
               - EnvVar
               - ImagePullPath
               - AcrUsername
               - AcrPassword
-          - Name: 修改云服务器配置
-            Description: 修改云服务器配置，需要重启应用
+          - Name: 修改云服务器配置|Modify ECS Instance Configuration
+            Description: 修改云服务器配置，可能需要重启服务器或应用进程 | Modify ECS instance configuration, may need to restart server or application process
             Type: Custom
             Parameters:
               - Port
               - EcsInstanceType
+              - InternetChargeType
+              - InternetMaxBandwidthOut
               - ImagePullPath
               - AcrUsername
               - AcrPassword
   ServiceType: private
   ServiceInfo:
-    Locale: zh-CN
-    Name: 单机容器应用
-    ShortDescription: 从代码仓库部署单机容器应用
-    Image: 'resources/icons/service_logo.png'
+    - Locale: zh-CN
+      Name: 从代码仓库部署容器应用单机版
+      Image: 'resources/icons/service_logo.png'
+    - Locale: en-US
+      Name: Deploy Single Node Application From Git Repository
+      Image: 'resources/icons/service_logo.png'
+
