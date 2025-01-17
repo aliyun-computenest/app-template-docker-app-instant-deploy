@@ -28,7 +28,7 @@ Service:
               - ImagePullPath
               - AcrUsername
               - AcrPassword
-          - Name: 修改云服务器配置|Modify ECS Instance Configuration
+          - Name: 修改云服务器配置 | Modify ECS Instance Configuration
             Description: 修改云服务器配置，可能需要重启服务器或应用进程 | Modify ECS instance configuration, may need to restart server or application process
             Type: Custom
             Parameters:
