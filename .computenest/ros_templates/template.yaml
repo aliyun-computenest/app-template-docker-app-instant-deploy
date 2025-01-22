@@ -49,8 +49,8 @@ Parameters:
       en: Environment variables
       zh-cn: 环境变量
     Description:
-      en: Application manager builds container image from source, you can specify environment variables for the container
-      zh-cn: 应用管理使用<a href='https://buildpacks.io' target='_blank'>buildpacks</a>从源代码构建容器镜像，您可以指定运行容器的环境变量
+      en: Environment variables for the container. Some applications need to set environment variables to start normally, some applications support initialization through environment variables such as setting the initial account and password for the application
+      zh-cn: 设置容器的环境变量。有些应用程序需要设置环境变量才能正常启动，有些应用程序支持通过环境变量来初始化比如设置应用的初始账号和密码
     AssociationProperty: List[Parameters]
     AssociationPropertyMetadata:
       Parameters:
@@ -58,7 +58,6 @@ Parameters:
           Type: String
         Value:
           Type: String
-          NoEcho: true
     Default: []
   ChargeType:
     Label:
@@ -154,9 +153,9 @@ Parameters:
     Default: 40
     Type: Number
     Description:
-      zh-cn: 系统盘大小, 取值范围：[40, 500], 单位：GB。
-      en: 'System disk size of each node, range of values: 40-500, units: GB.'
-    MinValue: 40
+      zh-cn: 系统盘大小, 取值范围：[20, 500], 单位：GB。
+      en: 'System disk size of each node, range of values: 20-500, units: GB.'
+    MinValue: 20
     MaxValue: 500
     Label:
       zh-cn: 系统盘空间
@@ -189,8 +188,8 @@ Parameters:
       en: Application listen port
       zh-cn: 应用监听端口
     Description:
-      en: The port application process listens to. Port will be passed to application as environment variable PORT
-      zh-cn: 应用程序进程监听的端口。端口会作为环境变量PORT传递给应用
+      en: The port application process listens to. Port will be passed to application as environment variable PORT. If application code does not support setting port through environment variable, please set to the default port that application code listens to
+      zh-cn: 应用程序进程监听的端口。端口会作为环境变量PORT传递给应用。如果应用代码不支持通过环境变量设置端口，请填写应用代码默认监听的端口
     MaxValue: 65535
     MinValue: 0
     Default: 80
@@ -442,7 +441,7 @@ Outputs:
     Description:
       zh-cn: 登录云服务器
       en: Login ECS instance
-    Value: 从“资源管理”找到云服务器实例，点击“远程连接”通过Workbench登录服务器; Find ECS instance in "Resources", click "Connect" to login through Workbench.
+    Value: 从“资源管理”找到云服务器实例，点击“远程连接”通过Workbench登录服务器
 Mappings: {}
 Metadata:
   'ALIYUN::ROS::Interface':
