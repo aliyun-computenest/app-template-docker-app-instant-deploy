@@ -441,7 +441,7 @@ Outputs:
     Description:
       zh-cn: 登录云服务器
       en: Login ECS instance
-    Value: 从“资源管理”找到云服务器实例，点击“远程连接”通过Workbench登录服务器
+    Value: Find ECS instance in "Resources", click "Connect" to login through Workbench.
 Mappings: {}
 Metadata:
   'ALIYUN::ROS::Interface':
