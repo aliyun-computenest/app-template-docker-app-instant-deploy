@@ -1,4 +1,4 @@
-ROSTemplateFormatVersion: '2015-09-01'
+ROSTemplateFormatVersion: "2015-09-01"
 Description:
   zh-cn: 从镜像仓库部署单机容器应用
   en: Deploy container application from image registry
@@ -76,9 +76,9 @@ Parameters:
     AssociationPropertyMetadata:
       Visible:
         Condition:
-          'Fn::Not':
-            'Fn::Equals':
-              - '${ChargeType}'
+          "Fn::Not":
+            "Fn::Equals":
+              - "${ChargeType}"
               - PostPaid
     Default: Month
     AllowedValues:
@@ -92,9 +92,9 @@ Parameters:
     AssociationPropertyMetadata:
       Visible:
         Condition:
-          'Fn::Not':
-            'Fn::Equals':
-              - '${ChargeType}'
+          "Fn::Not":
+            "Fn::Equals":
+              - "${ChargeType}"
               - PostPaid
     Default: 1
     Label:
@@ -124,10 +124,10 @@ Parameters:
     Description:
       zh-cn: 请参考<a href='https://help.aliyun.com/zh/ecs/use-cases/best-practices-for-instance-type-selection' target='_blank'>ECS选型最佳实践</a>
       en: Please refer to <a href='https://www.alibabacloud.com/help/en/ecs/use-cases/best-practices-for-instance-type-selection' target='_blank'>Best practices for selecting ECS instance types</a>
-    AssociationProperty: 'ALIYUN::ECS::Instance::InstanceType'
+    AssociationProperty: "ALIYUN::ECS::Instance::InstanceType"
     AssociationPropertyMetadata:
-      InstanceChargeType: '${ChargeType}'
-      ZoneId: '${ZoneId}'
+      InstanceChargeType: "${ChargeType}"
+      ZoneId: "${ZoneId}"
       Constraints:
         InstanceTypeFamily:
           - ecs.u1
@@ -154,7 +154,7 @@ Parameters:
     Type: Number
     Description:
       zh-cn: 系统盘大小, 取值范围：[20, 500], 单位：GB。
-      en: 'System disk size of each node, range of values: 20-500, units: GB.'
+      en: "System disk size of each node, range of values: 20-500, units: GB."
     MinValue: 20
     MaxValue: 500
     Label:
@@ -170,7 +170,7 @@ Parameters:
     MaxValue: 100
     Description:
       zh-cn: 公网出带宽最大值, 取值范围1-100
-      en: 'Internet Max Bandwidth Out,range of values: 1-100'
+      en: "Internet Max Bandwidth Out,range of values: 1-100"
   InternetChargeType:
     Default: PayByTraffic
     Type: String
@@ -198,12 +198,12 @@ Parameters:
     Label:
       zh-cn: 可用区
       en: Zone
-    AssociationProperty: 'ALIYUN::ECS::Instance::ZoneId'
+    AssociationProperty: "ALIYUN::ECS::Instance::ZoneId"
     AssociationPropertyMetadata:
       InstanceChargeType: ${ChargeType}
       SystemDiskCategory: cloud_essd
       InstanceType: ${EcsInstanceType}
-      DefaultValueStrategy: 'first'
+      DefaultValueStrategy: "first"
   VpcOption:
     Type: String
     Label:
@@ -235,7 +235,7 @@ Parameters:
           Fn::Equals:
             - ExistingVPC
             - ${VpcOption}
-    Default: ''
+    Default: ""
   VSwitchId:
     Type: String
     Label:
@@ -245,13 +245,13 @@ Parameters:
     AssociationPropertyMetadata:
       AutoSelectFirst: true
       VpcId: ${VpcId}
-      ZoneId: '${ZoneId}'
+      ZoneId: "${ZoneId}"
       Visible:
         Condition:
           Fn::Equals:
             - ExistingVPC
             - ${VpcOption}
-    Default: ''
+    Default: ""
   VpcCidrBlock:
     Type: String
     Label:
@@ -259,7 +259,7 @@ Parameters:
       zh-cn: 专有网络IPv4网段
     Description:
       zh-cn: VPC的ip地址段范围，您可以使用以下的ip地址段或其子网:<br><font color='green'>[10.0.0.0/8]</font><br><font color='green'>[172.16.0.0/12]</font><br><font color='green'>[192.168.0.0/16]</font>
-      en: 'The ip address range of the VPC in the CidrBlock form; <br>You can use the following ip address ranges and their subnets: <br><font color=''green''>[10.0.0.0/8]</font><br><font color=''green''>[172.16.0.0/12]</font><br><font color=''green''>[192.168.0.0/16]</font>'
+      en: "The ip address range of the VPC in the CidrBlock form; <br>You can use the following ip address ranges and their subnets: <br><font color='green'>[10.0.0.0/8]</font><br><font color='green'>[172.16.0.0/12]</font><br><font color='green'>[192.168.0.0/16]</font>"
     Default: 192.168.0.0/16
     Required: true
     AssociationProperty: ALIYUN::VPC::VPC::CidrBlock
@@ -305,7 +305,7 @@ Resources:
       VpcCidrBlock:
         Ref: VpcCidrBlock
   EcsSecurityGroup:
-    Type: 'ALIYUN::ECS::SecurityGroup'
+    Type: "ALIYUN::ECS::SecurityGroup"
     Properties:
       VpcId:
         Fn::GetAtt:
@@ -319,9 +319,9 @@ Resources:
         - SourceCidrIp: 0.0.0.0/0
           IpProtocol: tcp
           PortRange:
-            Fn::Sub: '${Port}/${Port}'
+            Fn::Sub: "${Port}/${Port}"
   EcsInstanceGroup:
-    Type: 'ALIYUN::ECS::InstanceGroup'
+    Type: "ALIYUN::ECS::InstanceGroup"
     Properties:
       UpdatePolicy: ForAllInstances
       IoOptimized: optimized
@@ -338,7 +338,7 @@ Resources:
       SystemDiskCategory: cloud_essd
       SystemDiskSize:
         Ref: SystemDiskSize
-      ImageId: '{{ resolve:oos:aliyun/services/computenest/images/aliyun_3_2104_docker_26 }}'
+      ImageId: "{{ resolve:oos:aliyun/services/computenest/images/aliyun_3_2104_docker_26 }}"
       PeriodUnit:
         Ref: PeriodUnit
       VSwitchId:
@@ -362,61 +362,60 @@ Resources:
     Properties:
       Sync: true
       CommandContent:
-        Fn::Sub:
-          |-
-            #!/bin/bash
-            if [ "${ImagePullPath}" == "" ]; then
-              echo "ImagePullPath is empty, please check."
-              exit 1
+        Fn::Sub: |-
+          #!/bin/bash
+          if [ "${ImagePullPath}" == "" ]; then
+            echo "ImagePullPath is empty, please check."
+            exit 1
+          fi
+          # 判断是否镜像在本地是否已存在
+          docker images ${ImagePullPath} | grep ${ImagePullPath}
+          if [ $? -gt 0 ]; then
+            # 本地不存在镜像，且为私有镜像则进行登录registry
+            if [ "${AcrUsername}" != "" ]; then
+              echo "login to docker registry"
+              server=$(echo ${ImagePullPath} | awk -F/ '{print $1}')
+              docker login $server --username=${AcrUsername} --password=${AcrPassword}
             fi
-            # 判断是否镜像在本地是否已存在
-            docker images ${ImagePullPath} | grep ${ImagePullPath}
-            if [ $? -gt 0 ]; then
-              # 本地不存在镜像，且为私有镜像则进行登录registry
-              if [ "${AcrUsername}" != "" ]; then
-                echo "login to docker registry"
-                server=$(echo ${ImagePullPath} | awk -F/ '{print $1}')
-                docker login $server --username=${AcrUsername} --password=${AcrPassword}
-              fi
-            fi
+          fi
 
-            # 保存环境变量
-            mkdir -p /opt/applicationmanager
-            touch /opt/applicationmanager/app.env
-            yum install -y jq
-            echo '${EnvVar}' | jq -r '.[] | "\(.Name)=\(.Value)"' >> /opt/applicationmanager/app.env
+          # 保存环境变量
+          mkdir -p /opt/applicationmanager
+          touch /opt/applicationmanager/app.env
+          yum install -y jq
+          echo '${EnvVar}' | jq -r '.[] | "\(.Name)=\(.Value)"' >> /opt/applicationmanager/app.env
 
-            # 停止已有的服务
-            systemctl stop aliyun-applicationmanager
+          # 停止已有的服务
+          systemctl stop aliyun-applicationmanager
 
-            # 创建系统服务
-            cat > /etc/systemd/system/aliyun-applicationmanager.service <<EOF
-            [Unit]
-            Description=Docker application
-            Requires=docker.service
-            After=docker.service
+          # 创建系统服务
+          cat > /etc/systemd/system/aliyun-applicationmanager.service <<EOF
+          [Unit]
+          Description=Docker application
+          Requires=docker.service
+          After=docker.service
 
-            [Service]
-            Restart=always
-            RemainAfterExit=yes
-            WorkingDirectory=/opt/applicationmanager
-            ExecStart=docker run --name applicationmanager --rm -p ${Port}:${Port} -e PORT=${Port} --env-file app.env ${ImagePullPath}
-            ExecStop=docker stop -t 10 applicationmanager
-            TimeoutStartSec=0
+          [Service]
+          Restart=always
+          RemainAfterExit=yes
+          WorkingDirectory=/opt/applicationmanager
+          ExecStart=docker run --name applicationmanager --rm -p ${Port}:${Port} -e PORT=${Port} --env-file app.env ${ImagePullPath}
+          ExecStop=docker stop -t 10 applicationmanager
+          TimeoutStartSec=0
 
-            [Install]
-            WantedBy=multi-user.target
-            EOF
+          [Install]
+          WantedBy=multi-user.target
+          EOF
 
-            systemctl daemon-reload
-            systemctl enable aliyun-applicationmanager
-            systemctl start aliyun-applicationmanager
+          systemctl daemon-reload
+          systemctl enable aliyun-applicationmanager
+          systemctl start aliyun-applicationmanager
       Type: RunShellScript
       InstanceIds:
         Fn::GetAtt:
           - EcsInstanceGroup
           - InstanceIds
-      Timeout: '600'
+      Timeout: "600"
 Outputs:
   endpoint:
     Label:
@@ -427,24 +426,34 @@ Outputs:
       en: Application endpoint
     Value:
       Fn::Sub:
-        - 'http://${ServerAddress}:${Port}'
+        - "http://${ServerAddress}:${Port}"
         - ServerAddress:
             Fn::Select:
-            - 0
-            - Fn::GetAtt:
-              - EcsInstanceGroup
-              - PublicIps
-  loginServer:
+              - 0
+              - Fn::GetAtt:
+                  - EcsInstanceGroup
+                  - PublicIps
+  connectServer:
     Label:
-      zh-cn: 登录云服务器
-      en: Login ECS instance
+      zh-cn: 远程连接云服务器
+      en: Connect to ECS instance
     Description:
-      zh-cn: 登录云服务器
-      en: Login ECS instance
-    Value: 从“资源管理”找到云服务器实例，点击“远程连接”通过Workbench登录服务器
+      zh-cn: 通过Workbench远程连接云服务器
+      en: Connect to ECS instance via Workbench
+    Value:
+      Fn::Sub:
+        - "https://ecs-workbench.aliyun.com/?from=ecs&instanceType=ecs&regionId=${RegionId}&instanceId=${InstanceId}"
+        - InstanceId:
+            Fn::Select:
+              - 0
+              - Fn::GetAtt:
+                - EcsInstanceGroup
+                - InstanceIds
+          RegionId:
+            Ref: ALIYUN::Region
 Mappings: {}
 Metadata:
-  'ALIYUN::ROS::Interface':
+  "ALIYUN::ROS::Interface":
     ParameterGroups:
       - Parameters:
           - Branch
@@ -479,4 +488,4 @@ Metadata:
           zh-cn: 云服务器配置（默认按量付费|2核2G|40G|新建VPC）
           en: ECS instance configuration(Default PayAsYourGo|2C2G|40G|New VPC)
         DefaultExpand: false
-    Hidden: ['ImagePullPath', 'AcrUsername', 'AcrPassword']
+    Hidden: ["ImagePullPath", "AcrUsername", "AcrPassword"]
