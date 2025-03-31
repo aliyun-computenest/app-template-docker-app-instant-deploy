@@ -132,7 +132,6 @@ Parameters:
         InstanceTypeFamily:
           - ecs.u1
           - ecs.e
-    Default: ecs.e-c1m1.large
   InstancePassword:
     NoEcho: true
     Type: String
@@ -150,7 +149,6 @@ Parameters:
     MaxLength: 30
     AssociationProperty: ALIYUN::ECS::Instance::Password
   SystemDiskSize:
-    Default: 40
     Type: Number
     Description:
       zh-cn: 系统盘大小, 取值范围：[20, 500], 单位：GB。
@@ -165,14 +163,12 @@ Parameters:
     Label:
       zh-cn: 公网出带宽最大值
       en: Internet Max Bandwidth Out
-    Default: 10
     MinValue: 1
     MaxValue: 100
     Description:
       zh-cn: 公网出带宽最大值, 取值范围1-100
       en: "Internet Max Bandwidth Out,range of values: 1-100"
   InternetChargeType:
-    Default: PayByTraffic
     Type: String
     Label:
       zh-cn: 网络付费类型
@@ -463,21 +459,23 @@ Metadata:
         Label:
           zh-cn: 应用配置
           en: Application configuration
-        DefaultExpand: true
-      - Parameters:
-          - InstancePassword
-        Label:
-          zh-cn: 云服务器密码
-          en: ECS instance password
-        DefaultExpand: true
       - Parameters:
           - ChargeType
           - PeriodUnit
           - Period
+          - InstancePassword
+        Label:
+          zh-cn: 云服务器基础配置
+          en: ECS instance basic configuration
+      - Parameters:
           - EcsInstanceType
           - SystemDiskSize
           - InternetChargeType
           - InternetMaxBandwidthOut
+        Label:
+          zh-cn: 云服务器规格
+          en: ECS instance type
+      - Parameters:
           - ZoneId
           - VpcOption
           - VpcId
@@ -485,7 +483,48 @@ Metadata:
           - VpcCidrBlock
           - VSwitchCidrBlock
         Label:
-          zh-cn: 云服务器配置（默认按量付费|2核2G|40G|新建VPC）
-          en: ECS instance configuration(Default PayAsYourGo|2C2G|40G|New VPC)
+          zh-cn: 网络配置
+          en: Netowrk configuration
         DefaultExpand: false
     Hidden: ["ImagePullPath", "AcrUsername", "AcrPassword"]
+  PredefinedParameters:
+    - Name:
+        zh-cn: 基础版
+        en: Basic Edition
+      Parameters:
+        InternetChargeType: PayByTraffic
+        EcsInstanceType:
+          - ecs.e-c1m1.large
+        SystemDiskSize: 40
+        InternetMaxBandwidthOut: 10
+      OrderList:
+        - EcsInstanceType
+        - SystemDiskSize
+        - InternetChargeType
+        - InternetMaxBandwidthOut
+      Type: Normal
+    - Name:
+        zh-cn: 高级版
+        en: Advanced Edition
+      Parameters:
+        InternetChargeType: PayByTraffic
+        EcsInstanceType:
+          - ecs.e-c1m2.xlarge
+        SystemDiskSize: 120
+        InternetMaxBandwidthOut: 10
+      OrderList:
+        - EcsInstanceType
+        - SystemDiskSize
+        - InternetChargeType
+        - InternetMaxBandwidthOut
+      Type: Normal
+    - Name:
+        zh-cn: 自定义
+        en: Custom
+      Parameters: {}
+      Type: Custom
+      OrderList:
+        - EcsInstanceType
+        - SystemDiskSize
+        - InternetChargeType
+        - InternetMaxBandwidthOut
