@@ -1,0 +1,19 @@
+caseId: stc-c88029e5025f4028a91b
+parameters:
+  AcrPassword: ''
+  AcrUsername: ''
+  Branch: Please fill in
+  ChargeType: PostPaid
+  CommitHash: Please fill in
+  EcsInstanceType: $[iact3-auto]
+  EnvVar: []
+  ImagePullPath: ''
+  InstancePassword: $[iact3-auto]
+  InternetChargeType: Please fill in
+  InternetMaxBandwidthOut: Please fill in
+  Port: 80
+  SystemDiskSize: Please fill in
+  VSwitchCidrBlock: 192.168.0.0/24
+  VpcCidrBlock: 192.168.0.0/16
+  VpcOption: NewVPC
+templateName: docker
