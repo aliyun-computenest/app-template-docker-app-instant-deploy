@@ -61,7 +61,7 @@ Parameters:
     Default: []
   ChargeType:
     Label:
-      zh-cn: 付费模式
+      zh-cn: 付费类型
       en: Pay type
     Type: String
     AllowedValues:
@@ -460,14 +460,6 @@ Metadata:
           zh-cn: 应用配置
           en: Application configuration
       - Parameters:
-          - ChargeType
-          - PeriodUnit
-          - Period
-          - InstancePassword
-        Label:
-          zh-cn: 云服务器基础配置
-          en: ECS instance basic configuration
-      - Parameters:
           - EcsInstanceType
           - SystemDiskSize
           - InternetChargeType
@@ -475,6 +467,14 @@ Metadata:
         Label:
           zh-cn: 云服务器规格
           en: ECS instance type
+      - Parameters:
+          - ChargeType
+          - PeriodUnit
+          - Period
+          - InstancePassword
+        Label:
+          zh-cn: 云服务器付费类型和密码
+          en: ECS instance pay type and password
       - Parameters:
           - ZoneId
           - VpcOption
@@ -486,6 +486,11 @@ Metadata:
           zh-cn: 网络配置
           en: Netowrk configuration
         DefaultExpand: false
+      - Parameters:
+          - ImagePullPath
+          - AcrUsername
+          - AcrPassword
+        Label: ""
     Hidden: ["ImagePullPath", "AcrUsername", "AcrPassword"]
   PredefinedParameters:
     - Name:
